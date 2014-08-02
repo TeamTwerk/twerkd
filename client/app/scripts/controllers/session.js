@@ -11,6 +11,7 @@ angular.module('clientApp')
   .controller('SessionCtrl', function (mySocket,$scope) {  	
   	mySocket.on('data', function(data) {
   		$scope.tpm = data.c['tpm'];
+  		$scope.t = Math.round(data.c['t']);
   		console.log(data);
   	});
 });
