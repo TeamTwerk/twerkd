@@ -7,7 +7,7 @@ server.listen(3000);
 io.adapter(ioredis({host: 'localhost', port: 6379}));
 
 app.get('/', function (req, res) {
-  res.sendfile(__dirname + '/index.html');
+  res.sendfile(__dirname + '/client/index.html');
 });
 
 io.on('connection', function (socket) {
