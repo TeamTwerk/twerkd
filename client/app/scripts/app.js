@@ -24,15 +24,13 @@ angular
         templateUrl: 'views/main.html',
         controller: 'MainCtrl'
       })
-      .when('/:roomid', {
-        templateUrl: 'views/session.html',
-        controller: 'SessionCtrl'
-      })
       .when('/about', {
         templateUrl: 'views/about.html',
         controller: 'AboutCtrl'
       })
-      .when('/session', {
+      .when('/:roomid', { 
+        //Always put this route AFTER other major routes otherwise it will override them 
+        //e.g. it will think /about is a room with id "about"
         templateUrl: 'views/session.html',
         controller: 'SessionCtrl'
       })
