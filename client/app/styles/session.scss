@@ -1,10 +1,10 @@
-.twerkBar {
+.twerk-bar {
 	background-color: #BD4343;
 	min-height: 50px;
 	border-radius: 10px;
 	overflow: hidden;
 
-	.scoreBar {
+	.score-bar {
 		min-height: 50px;
 		height: 100%;
 		background-color: #4385BD;
@@ -13,3 +13,10 @@
 	}
 }
 
+.stats-wrapper {
+	padding: 25px;
+	background-color: #EEEEEE;
+	min-height: 50px;
+	border-radius: 10px;
+	text-align: center;
+}
