@@ -27,8 +27,8 @@ angular.module('clientApp')
   	});
 
     //Simple pagination function
-    $scope.pageRight = function pageLeft() {
-      $scope.page = Math.max($scope.page- 1, 0);
+    $scope.pageLeft = function pageLeft() {
+      $scope.page = Math.max($scope.page - 1, 0);
     }
 
     $scope.pageRight = function pageRight() {
@@ -51,22 +51,19 @@ angular.module('clientApp')
             "x": "15",
             "y": [
               5,12
-            ],
-            "tooltip": "This is a tooltip"
+            ]
           },
           {
             "x": "30",
             "y": [
               30,15
-            ],
-            "tooltip": "This is a tooltip"
+            ]
           },
           {
             "x": "45",
             "y": [
               61,56
-            ],
-            "tooltip": "This is a tooltip"
+            ]
           }
         ]
       }
