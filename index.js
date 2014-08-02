@@ -11,8 +11,29 @@ app.get('/', function (req, res) {
 });
 
 io.on('connection', function (socket) {
-  socket.emit('news', { hello: 'world' });
-  socket.on('my other event', function (data) {
-    console.log(data);
+  socket.join('lobby');
+  for (var i = 0; i < io.sockets.length; i++) {
+    console.log(io.sockets[i].rooms)
+    console.log("----------");
+  }
+  /*for (s in io.sockets) {
+    console.log(s);
+    console.log("test");
+  }*/
+  //console.log(io.sockets);
+  socket.on('join', function (data) {
+    socket.join(data.roomid);
   });
+  socket.on('leave', function (data) {
+    socket.leave(data.roomid);
+  });
+  socket.on('data', function (data) {
+
+  });
+  socket.on('matchmaking', findOpponent);
 });
+
+function findOpponent(data) {
+  socket.join('lobby');
+
+}
