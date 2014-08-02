@@ -11,6 +11,8 @@ angular.module('clientApp')
   .controller('SessionCtrl', function (mySocket,$scope,$routeParams) {  	
   $scope.page = 0;
 
+  $scope.numPages = 3; //todo update this with the number of pages in the switch statement in session.html
+
   initDebugData();
 
   //Join the room that was passed in the url (route params)
@@ -24,10 +26,19 @@ angular.module('clientApp')
   		}
   	});
 
+    //Simple pagination function
+    $scope.pageRight = function pageLeft() {
+      $scope.page = Math.max($scope.page- 1, 0);
+    }
+
+    $scope.pageRight = function pageRight() {
+      $scope.page = Math.min($scope.page + 1, $scope.numPages-1);
+    }
+
   	function handleTwerk(data) {
   		$scope.tpm = data['tpm'];
   		$scope.t = Math.round(data['t']);
-	}
+    }
 
     function initDebugData() {
        $scope.graphData = {

@@ -1,11 +1,11 @@
 <div class="session-nav">
 	<ul class="pager">
 	  <li class="previous">
-	  	<a href="javascript:void(0);" ng-click="page = page - 1">&larr;</a>
+	  	<a href="javascript:void(0);" ng-click="pageLeft()">&larr;</a>
 	  </li>
 	  <li>Versus {{page}}</li>
 	  <li class="next">
-  		<a href="javascript:void(0);" ng-click="page = page + 1">&rarr;</a>
+  		<a href="javascript:void(0);" ng-click="pageRight()">&rarr;</a>
 	  </li>
 	</ul>
 </div>
@@ -16,6 +16,9 @@
 	</div>
 	<div ng-switch-when="1">
 		<div ng-include src="'/views/visualisations/graph.html'" ></div>
+	</div>
+	<div ng-switch-when="2">
+		<div ng-include src="'/views/visualisations/pulse.html'" ></div>
 	</div>
 </div>
 <br>
