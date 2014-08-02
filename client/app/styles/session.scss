@@ -1,0 +1,27 @@
+.twerk-bar {
+	background-color: #BD4343;
+	min-height: 50px;
+	border-radius: 10px;
+	overflow: hidden;
+
+	.score-bar {
+		min-height: 50px;
+		height: 100%;
+		background-color: #4385BD;
+		-webkit-transition: width 2s; /* For Safari 3.1 to 6.0 */
+		transition: width 2s;
+	}
+}
+
+.visualisation-wrapper {
+	padding: 25px;
+	background-color: #EEEEEE;
+	min-height: 50px;
+	border-radius: 10px;
+	text-align: center;
+}
+
+#chart {
+  height: 400px;
+  width: 100%;
+}
