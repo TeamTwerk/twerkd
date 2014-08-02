@@ -1,11 +1,21 @@
-<p>Twerk it, twerk it</p>
+<div class="session-nav">
+	<ul class="pager">
+	  <li class="previous">
+	  	<a href="javascript:void(0);" ng-click="page = page - 1">&larr;</a>
+	  </li>
+	  <li>Versus {{page}}</li>
+	  <li class="next">
+  		<a href="javascript:void(0);" ng-click="page = page + 1">&rarr;</a>
+	  </li>
+	</ul>
+</div>
 
-<p>Completed Twerks: {{t}}</p>
-<p>Twerks Per Minute: {{tpm}}</p>
-
-<div class="stats-wrapper">
-	<p>Twerk for points to fill up your twerk-o-meter</p>
-	<div class="twerk-bar">
-		<div class="score-bar" style="width:{{t}}px;"></div>
+<div class="visualisation-wrapper" ng-switch="page">
+	<div ng-switch-when="0" >
+		<div ng-include src="'/views/visualisations/battle.html'" ></div>
+	</div>
+	<div ng-switch-when="1">
+		<div ng-include src="'/views/visualisations/graph.html'" ></div>
 	</div>
 </div>
+<br>

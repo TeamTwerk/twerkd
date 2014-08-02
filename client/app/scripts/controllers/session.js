@@ -9,7 +9,9 @@
  */
 angular.module('clientApp')
   .controller('SessionCtrl', function (mySocket,$scope,$routeParams) {  	
-  	//Join the room that was passed in the url (route params)
+  $scope.page = 0;
+
+  //Join the room that was passed in the url (route params)
 	mySocket.emit('join', {c:{ roomId: $routeParams.roomid} });
   	
   	mySocket.on('data', function(data) {
