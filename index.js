@@ -85,7 +85,7 @@ function joinRoom(socket, roomId) {
   var roomSocketIds = _.map(roomSockets, function (s) {
     return s.id;
   });
-  socket.to(roomId).emit({m: 'updateRoom', c:{ users: roomSocketIds }});
+  socket.to(roomId).emit('room', {m: 'updateRoom', c:{ users: roomSocketIds }});
 }
 
 function leaveRoom(socket, roomId) {
@@ -94,7 +94,7 @@ function leaveRoom(socket, roomId) {
   var roomSocketIds = _.map(roomSockets, function (s) {
     return s.id;
   });
-  socket.to(roomId).emit({m: 'updateRoom', c:{ users: roomSocketIds }});
+  socket.to(roomId).emit('room', {m: 'updateRoom', c:{ users: roomSocketIds }});
 }
 
 function getSocketsInRoom(roomId) {
