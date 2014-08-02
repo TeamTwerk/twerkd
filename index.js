@@ -11,6 +11,7 @@ app.get('/', function (req, res) {
 });
 
 io.on('connection', function (socket) {
+  console.log("CONNECT", socket.id);
   socket.join('lobby');
   for (var i = 0; i < io.sockets.length; i++) {
     console.log(io.sockets[i].rooms)
