@@ -17,6 +17,7 @@
     "mongoose": "^3.8.14",
     "express": "^4.7.2",
     "lodash": "^2.4.1",
-    "shortid": "^2.0.1"
+    "shortid": "^2.0.1",
+    "body-parser": "^1.5.2"
   }
 }
