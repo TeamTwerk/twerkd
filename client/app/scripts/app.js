@@ -1,5 +1,4 @@
 'use strict';
-
 /**
  * @ngdoc overview
  * @name clientApp
@@ -10,6 +9,7 @@
  */
 angular
   .module('clientApp', [
+    'btford.socket-io',
     'ngAnimate',
     'ngCookies',
     'ngResource',
@@ -27,7 +27,20 @@ angular
         templateUrl: 'views/about.html',
         controller: 'AboutCtrl'
       })
+      .when('/session', {
+        templateUrl: 'views/session.html',
+        controller: 'SessionCtrl'
+      })
       .otherwise({
         redirectTo: '/'
       });
+  })
+  .factory('mySocket', function (socketFactory) {
+    var myIoSocket = io.connect('http://172.18.1.251:3000');
+
+    var mySocket = socketFactory({
+      ioSocket: myIoSocket
+    });
+
+    return mySocket;
   });
