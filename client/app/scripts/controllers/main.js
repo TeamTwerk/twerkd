@@ -8,11 +8,13 @@
  * Controller of the clientApp
  */
 angular.module('clientApp')
-  .controller('MainCtrl', function ($scope) {
-
-    $scope.awesomeThings = [
-      'HTML5 Boilerplate',
-      'AngularJS',
-      'Karma'
-    ];
+  .controller('MainCtrl', function ($scope, mySocket) {
+    mySocket.emit('data', {m: "getRooms"});
+    mySocket.on('data', function (data) {
+      switch(data.m) {
+        case "rooms":
+          $scope.rooms = data.c.rooms;
+          break;
+      }
+    });
   });
