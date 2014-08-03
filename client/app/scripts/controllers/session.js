@@ -104,7 +104,7 @@ angular.module('clientApp')
     //updateChart();
   }
 
-  function handleGameOver() {
+  function handleGameOver(data) {
     var player1Twerks = $scope.playerData(0).t;
     var player2Twerks = $scope.playerData(1).t;
     var winnerIndex =  player1Twerks > player2Twerks ? 0 : 1;
