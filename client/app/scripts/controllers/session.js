@@ -54,6 +54,9 @@ angular.module('clientApp')
         case 'twerk':
           handleTwerk(data.c);
           break;
+        case 'gameOver':
+          handleGameOver(data.c);
+          break;
       }
     });
   }
@@ -99,6 +102,20 @@ angular.module('clientApp')
     (id == players[0].id) ? column1Data.push(twerk.t) : column2Data.push(twerk.t);
 
     //updateChart();
+  }
+
+  function handleGameOver() {
+    var player1Twerks = $scope.playerData(0).t;
+    var player2Twerks = $scope.playerData(1).t;
+    var winnerIndex =  player1Twerks > player2Twerks ? 0 : 1;
+
+    if(players[winnerIndex].name != null) {
+      $scope.winnerName = players[winnerIndex].name;
+    } else {
+      $scope.winnerName = (winnerIndex == 0) ? 'Player 1' : 'Player 2';
+    }
+
+    $scope.gameOver = true;
   }
 
   $scope.initGraph = function() {
