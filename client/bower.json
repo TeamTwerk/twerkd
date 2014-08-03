@@ -13,8 +13,8 @@
     "angular-touch": "1.2.16",
     "angular-route": "1.2.16",
     "angular-socket-io": "0.6.0",
-    "d3" : "3.3.13",
-    "angular-charts" : "0.2.4"
+    "d3": "3.3.13",
+    "c3": "~0.2.4"
   },
   "devDependencies": {
     "angular-mocks": "1.2.16",

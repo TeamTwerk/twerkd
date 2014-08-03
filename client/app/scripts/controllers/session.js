@@ -16,14 +16,16 @@ angular.module('clientApp')
   $scope.numPages = 3; //todo update this with the number of pages in the switch statement in session.html
 
   var userData = {};
-  var twerkHistory = [{"x": "1", "y": [0,0]}];
+  var column1Data = ['player1',0];
+  var column2Data = ['player2',0];
 
-
-  initGraph(twerkHistory);
+  $scope.chart = null;
 
   //Join the room that was passed in the url (route params)
 	joinRoom(mySocket,$routeParams.roomid);
   listenToSocket(mySocket);
+
+  setInterval(updateChart, 1000);
 
   /* Scope functions */
 
@@ -77,6 +79,7 @@ angular.module('clientApp')
 
   function handleRoomUpdate(data) {
     players = data['users'].filter(filterSpectators);
+    $scope.players = players;
   }
 
   function filterSpectators(value,index,ar) {
@@ -92,29 +95,37 @@ angular.module('clientApp')
     if(userData[id] == null) userData[id] = [];
     userData[id].push(twerk);
 
-    twerkHistory.push({'x': twerkHistory.length, 'y': [data['t'],data['t']]});
+    //update graph collumns
+    (id == players[0].id) ? column1Data.push(twerk.t) : column2Data.push(twerk.t);
+
+    //updateChart();
   }
 
-  function initGraph(data) {
-     $scope.graphData = {
-      "series": [
-        "Player 45",
-        "Player 51"
-      ],
-      "data": data
+  $scope.initGraph = function() {
+    $scope.chart = c3.generate({
+      bindto: '#twerkGraph',
+      data: {
+        columns: [
+            column1Data,
+            column2Data
+          ],
+          type: 'spline',
+          colors: {
+            player1: '#4385BD',
+            player2: '#BD4343'
+        }
+        }
+      }); 
     }
 
-    $scope.graphConfig = {
-      title: 'Twerk-O-Meter',
-      tooltips: true,
-      labels: false,
-      legend: {
-        display: true,
-        position: 'left'
-      },
-      lineLegend: 'lineEnd' // can be also 'traditional'
-    }
-
-    $scope.chartType = 'line';
+  function updateChart() {
+    if($scope.chart == null) return;
+    
+     $scope.chart.load({
+        columns: [
+           column1Data,
+           column2Data
+        ]
+    });
   }
 });
