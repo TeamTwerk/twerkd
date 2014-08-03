@@ -1,17 +1,20 @@
 <div class="battle-stats">
 	<div class="player-1">
+		<p class="player-name blue-text">{{players[0].name ? players[0].name : 'Player 1'}}</p>
 		<p>{{playerData(0).t}}</p>
 		<p>{{playerData(0).tpm}}</p>
 		<p>0</p>
 	</div>
 
 	<div class="titles">
+		<p class="player-name"> Vs </p>
 		<p>Twerks</p>
 		<p>Twerks Per Minute</p>
 		<p>Score</p>
 	</div>
 
 	<div class="player-2">
+		<p class="player-name red-text">{{players[1].name ? players[1].name : 'Player 2'}}</p>
 		<p>{{playerData(1).t}}</p>
 		<p>{{playerData(1).tpm}}</p>
 		<p>0</p>
@@ -22,5 +25,7 @@
 <div style="clear: both;"></div>
 
 <div class="twerk-bar">
+	<div class="player-1">{{playerData(0).t}}</div>
+	<div class="player-2">{{playerData(1).t}}</div>
 	<div class="score-bar" style="width:{{barProgress()}}px;"></div>
 </div>

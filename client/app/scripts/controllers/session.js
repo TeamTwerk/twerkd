@@ -71,14 +71,15 @@ angular.module('clientApp')
   }
 
   $scope.barProgress = function() {
-    var player1Twerks = 500;
-    var player2Twerks = 25;
+    var player1Twerks = $scope.playerData(0).t;
+    var player2Twerks = $scope.playerData(1).t;
 
     return (player1Twerks / (player1Twerks + player2Twerks)) * 640; //magic number bar width!
   }
 
   function handleRoomUpdate(data) {
     players = data['users'].filter(filterSpectators);
+    $scope.players = players;
   }
 
   function filterSpectators(value,index,ar) {
@@ -97,7 +98,7 @@ angular.module('clientApp')
     //update graph collumns
     (id == players[0].id) ? column1Data.push(twerk.t) : column2Data.push(twerk.t);
 
-    updateChart();
+    //updateChart();
   }
 
   $scope.initGraph = function() {

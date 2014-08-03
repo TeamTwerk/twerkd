@@ -3,6 +3,9 @@
 	min-height: 50px;
 	border-radius: 10px;
 	overflow: hidden;
+	color: #ffffff;
+	font-size: 18px;
+	font-weight: bold;
 
 	.score-bar {
 		min-height: 50px;
@@ -11,6 +14,27 @@
 		-webkit-transition: width 2s; /* For Safari 3.1 to 6.0 */
 		transition: width 2s;
 	}
+
+	.player-1 {
+		margin-top: 13px;
+		margin-left: 40px;
+		float: left;
+		text-align:left;
+	}
+	.player-2 {
+		margin-top: 15px;
+		margin-right: 40px;
+		float: right;
+		text-align:right;
+	}
+}
+
+.red-text {
+	color: #BD4343;
+}
+
+.blue-text {
+	color: #4385BD;
 }
 
 .visualisation-wrapper {
@@ -22,6 +46,11 @@
 }
 
 .battle-stats {
+	.player-name {
+		font-weight: bold;
+		font-size: 24px;
+	}
+
 	.player-1 {
 		 float: left;
   		width:33.33333%;
