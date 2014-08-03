@@ -9,7 +9,6 @@
  */
 angular
   .module('clientApp', [
-    'angularCharts',
     'btford.socket-io',
     'ngAnimate',
     'ngCookies',

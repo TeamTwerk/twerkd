@@ -21,11 +21,6 @@
 	text-align: center;
 }
 
-#chart {
-  height: 400px;
-  width: 100%;
-}
-
 .battle-stats {
 	.player-1 {
 		 float: left;
@@ -43,4 +38,8 @@
  		width:33.33333%;
  		text-align:right;
 	}
+}
+
+.c3-chart .c3-chart-lines {
+	fill-opacity: 0;
 }
