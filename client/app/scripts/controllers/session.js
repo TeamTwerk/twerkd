@@ -96,7 +96,7 @@ angular.module('clientApp')
 
     //update graph collumns
     (id == players[0].id) ? column1Data.push(twerk.t) : column2Data.push(twerk.t);
-    
+
     updateChart();
   }
 
@@ -108,7 +108,11 @@ angular.module('clientApp')
             column1Data,
             column2Data
           ],
-          type: 'spline'
+          type: 'spline',
+          colors: {
+            player1: '#4385BD',
+            player2: '#BD4343'
+        }
         }
       }); 
     }
