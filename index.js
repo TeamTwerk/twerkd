@@ -57,7 +57,7 @@ io.on('connection', function (socket) {
             socket.broadcast.to(data.c.roomId).emit('data', data);
             if(checkReadyStatus(data.c.roomId)) {
               console.log("READY READY READY READY");
-              io.to(data.c.roomId).emit('data', {m: 'startMatch', c: { countdown: 5, duration: 120 } });
+              io.to(data.c.roomId).emit('data', {m: 'startMatch', c: { countdown: 5, duration: 30 } });
             }
             break;
           case "unready":
@@ -170,7 +170,7 @@ function joinRoom(socket, roomId) {
   }
   var roomSockets = getSocketsInRoom(roomId);
   var roomSocketObjs = _.map(roomSockets, function (s) {
-    return {id: s.id, spectator: s.spectator ? s.spectator : false, uuid: socket.uuid ? socket.uuid : null, name: socket.name};
+    return {id: s.id, spectator: s.spectator ? s.spectator : false, name: socket.name};
   });
   io.to(roomId).emit('data', {m: 'updateRoom', c:{ users: roomSocketObjs }});
 }
