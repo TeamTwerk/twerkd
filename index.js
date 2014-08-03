@@ -3,17 +3,11 @@ var app = express();
 var bodyParser = require('body-parser');
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
-var ioredis = require('socket.io-redis');
 var _ = require('lodash');
 var shortId = require('shortid');
-var mongoose = require('mongoose');
 
 var roomIdToSockets = {};
 var socketsToRoomId = {};
-
-//mongoose.connect('mongodb://localhost/twerkbase');
-
-//var api = require('./api').init(app, mongoose);
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -24,7 +18,6 @@ app.use(bodyParser.json())
 app.use(express.static(__dirname + '/public'));
 
 server.listen(3000);
-io.adapter(ioredis({host: 'localhost', port: 6379}));
 
 app.get('/', function (req, res) {
   res.sendfile(__dirname + '/client/index.html');
@@ -54,6 +47,7 @@ io.on('connection', function (socket) {
     console.log('DATA');
     console.log(data);
     socket.emit('data', data);
+    if (data.m === "getRooms") socket.emit('data', {m: "rooms", c: { rooms: _.keys(roomIdToSockets)} });
     if (data.c !== undefined) {
       if (data.c.roomId !== undefined) {
         switch(data.m) {
@@ -63,7 +57,7 @@ io.on('connection', function (socket) {
             socket.broadcast.to(data.c.roomId).emit('data', data);
             if(checkReadyStatus(data.c.roomId)) {
               console.log("READY READY READY READY");
-              io.to(data.c.roomId).emit('data', {m: 'startMatch', c: { countdown: 5, duration: 30 } });
+              io.to(data.c.roomId).emit('data', {m: 'startMatch', c: { countdown: 5, duration: 120 } });
             }
             break;
           case "unready":
@@ -71,6 +65,7 @@ io.on('connection', function (socket) {
             socket.broadcast.to(data.c.roomId).emit('data', data);
             break;
           case "twerk":
+            data.c.id = socket.id;
             socket.broadcast.to(data.c.roomId).emit('data', data);
             break;
         }
@@ -83,7 +78,6 @@ io.on('connection', function (socket) {
     switch (data.m) {
       case "join":
         socket.name = data.c.name;
-        socket.uuid = data.c.uuid;
         joinMatchmaking(socket, data);
         break;
       case "leave":
@@ -109,7 +103,7 @@ function checkReadyStatus(roomId) {
       returnVal = true;
     }
     sockets.forEach(function (s) {
-      if (!s.isReady || s.isReady === undefined) {
+      if (!s.isReady && (!s.spectator || s.spectator === undefined)) {
         returnVal = false;
       }
     });
@@ -121,10 +115,20 @@ setInterval(function () {
   matchmake();
 }, 1000);
 
+function generateRandomString(len) {
+  var chars = 'abcdefghijklmnopqrstuvwxyz123456789';
+  var result = "";
+  while(result.length < len) {
+    var index = Math.floor(Math.random() * chars.length);
+    result += chars[index];
+  }
+  return result;
+}
+
 function matchmake() {
   var pair = findPair();
   if (pair) {
-      var randomRoomId = shortId.generate();
+      var randomRoomId = generateRandomString(4);
       var player1 = pair[0];
       var player2 = pair[1];
       joinRoom(player1, randomRoomId);
@@ -166,7 +170,7 @@ function joinRoom(socket, roomId) {
   }
   var roomSockets = getSocketsInRoom(roomId);
   var roomSocketObjs = _.map(roomSockets, function (s) {
-    return {id: s.id, spectator: s.spectator || false, uuid: socket.uuid || null, name: socket.name};
+    return {id: s.id, spectator: s.spectator ? s.spectator : false, uuid: socket.uuid ? socket.uuid : null, name: socket.name};
   });
   io.to(roomId).emit('data', {m: 'updateRoom', c:{ users: roomSocketObjs }});
 }
