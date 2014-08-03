@@ -69,8 +69,8 @@ angular.module('clientApp')
   }
 
   $scope.barProgress = function() {
-    var player1Twerks = 500;
-    var player2Twerks = 25;
+    var player1Twerks = $scope.playerData(0).t;
+    var player2Twerks = $scope.playerData(1).t;
 
     return (player1Twerks / (player1Twerks + player2Twerks)) * 640; //magic number bar width!
   }
