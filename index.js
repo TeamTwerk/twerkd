@@ -1,7 +1,27 @@
-var app = require('express')();
+var express = require('express');
+var app = express();
+var bodyParser = require('body-parser');
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 var ioredis = require('socket.io-redis');
+var _ = require('lodash');
+var shortId = require('shortid');
+var mongoose = require('mongoose');
+
+var roomIdToSockets = {};
+var socketsToRoomId = {};
+
+//mongoose.connect('mongodb://localhost/twerkbase');
+
+//var api = require('./api').init(app, mongoose);
+
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }))
+
+// parse application/json
+app.use(bodyParser.json())
+
+app.use(express.static(__dirname + '/public'));
 
 server.listen(3000);
 io.adapter(ioredis({host: 'localhost', port: 6379}));
@@ -11,30 +31,157 @@ app.get('/', function (req, res) {
 });
 
 io.on('connection', function (socket) {
-  console.log("CONNECT", socket.id);
-  socket.join('lobby');
-  for (var i = 0; i < io.sockets.length; i++) {
-    console.log(io.sockets[i].rooms)
-    console.log("----------");
-  }
-  /*for (s in io.sockets) {
-    console.log(s);
-    console.log("test");
-  }*/
-  //console.log(io.sockets);
+  /*var t = 0;
+  setInterval(function() {
+    var randomTpm = Math.random() * 128;
+    t += (randomTpm/60)
+    socket.emit('data', {m: 'twerk', c: { tpm: randomTpm, t: t } });
+  }, 1000);*/
   socket.on('join', function (data) {
-    socket.join(data.roomid);
+    console.log('JOIN');
+    console.log(data);
+    if (data.c.spectator !== undefined) {
+      socket.spectator = data.c.spectator;
+    }
+      joinRoom(socket, data.c.roomId);
   });
   socket.on('leave', function (data) {
-    socket.leave(data.roomid);
+    console.log('LEAVE');
+    console.log(data);
+    leaveRoom(socket, data.c.roomId);
   });
   socket.on('data', function (data) {
-
+    console.log('DATA');
+    console.log(data);
+    socket.emit('data', data);
+    if (data.c !== undefined) {
+      if (data.c.roomId !== undefined) {
+        switch(data.m) {
+          case "ready":
+            socket.isReady = true;
+            data.c.id = socket.id;
+            socket.broadcast.to(data.c.roomId).emit('data', data);
+            if(checkReadyStatus(data.c.roomId)) {
+              console.log("READY READY READY READY");
+              io.to(data.c.roomId).emit('data', {m: 'startMatch', c: { countdown: 5, duration: 30 } });
+            }
+            break;
+          case "unready":
+            socket.isReady = false;
+            socket.broadcast.to(data.c.roomId).emit('data', data);
+            break;
+          case "twerk":
+            socket.broadcast.to(data.c.roomId).emit('data', data);
+            break;
+        }
+      }
+    }
   });
-  socket.on('matchmaking', findOpponent);
+  socket.on('matchmaking', function (data) {
+    console.log('MATCHMAKING');
+    console.log(data);
+    switch (data.m) {
+      case "join":
+        socket.name = data.c.name;
+        socket.uuid = data.c.uuid;
+        joinMatchmaking(socket, data);
+        break;
+      case "leave":
+        leaveMatchmaking(socket, data);
+        break;
+    }
+  });
+  socket.on('disconnect', function () {
+    var rooms = socketsToRoomId[socket.id];
+    if (_.isArray(rooms)) {
+      rooms.forEach(function (room) {
+        leaveRoom(socket, room);
+      });
+    }
+  });
 });
 
-function findOpponent(data) {
-  socket.join('lobby');
+function checkReadyStatus(roomId) {
+  var sockets = getSocketsInRoom(roomId);
+  var returnVal = false;
+  if (sockets !== undefined) {
+    if (sockets.length > 1) {
+      returnVal = true;
+    }
+    sockets.forEach(function (s) {
+      if (!s.isReady || s.isReady === undefined) {
+        returnVal = false;
+      }
+    });
+  }
+  return returnVal;
+}
 
+setInterval(function () {
+  matchmake();
+}, 1000);
+
+function matchmake() {
+  var pair = findPair();
+  if (pair) {
+      var randomRoomId = shortId.generate();
+      var player1 = pair[0];
+      var player2 = pair[1];
+      joinRoom(player1, randomRoomId);
+      joinRoom(player2, randomRoomId);
+      player1.emit('matchmaking', {m: 'joinRoom', c:{roomId: randomRoomId, opponent: player2.id}})
+      player2.emit('matchmaking', {m: 'joinRoom', c:{roomId: randomRoomId, opponent: player1.id}});
+      leaveRoom(player1, 'lobby');
+      leaveRoom(player2, 'lobby');
+    }
+}
+
+function joinMatchmaking(socket, data) {
+  joinRoom(socket, 'lobby');
+}
+
+function leaveMatchmaking(socket, data) {
+  leaveRoom(socket, 'lobby');
+}
+
+function findPair() {
+  var pool = getSocketsInRoom('lobby');
+
+  pool = _.shuffle(pool);
+
+  return pool.length > 1 ? [pool[0], pool[1]] : false;
+}
+
+function joinRoom(socket, roomId) {
+  socket.join(roomId);
+  if (_.isArray(roomIdToSockets[roomId])) {
+    roomIdToSockets[roomId].push(socket);
+  } else {
+    roomIdToSockets[roomId] = [socket];
+  }
+  if (_.isArray(socketsToRoomId[socket.id])) {
+    socketsToRoomId[socket.id].push(roomId);
+  } else {
+    socketsToRoomId[socket.id] = [roomId];
+  }
+  var roomSockets = getSocketsInRoom(roomId);
+  var roomSocketObjs = _.map(roomSockets, function (s) {
+    return {id: s.id, spectator: s.spectator || false, uuid: socket.uuid || null, name: socket.name};
+  });
+  io.to(roomId).emit('data', {m: 'updateRoom', c:{ users: roomSocketObjs }});
+}
+
+function leaveRoom(socket, roomId) {
+  socket.leave(roomId);
+  _.pull(roomIdToSockets[roomId], socket);
+  _.pull(socketsToRoomId[socket.id], roomId);
+  var roomSockets = getSocketsInRoom(roomId);
+  var roomSocketIds = _.map(roomSockets, function (s) {
+    return s.id;
+  });
+  socket.to(roomId).emit('data', {m: 'updateRoom', c:{ users: roomSocketIds }});
+}
+
+function getSocketsInRoom(roomId) {
+  return roomIdToSockets[roomId];
 }
