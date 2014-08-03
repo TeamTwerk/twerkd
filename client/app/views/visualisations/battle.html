@@ -1,19 +1,19 @@
 <div class="battle-stats">
 	<div class="player-1">
-		<p>0{{t}}</p>
-		<p>0{{tpm}}</p>
+		<p>{{playerData(0).t}}</p>
+		<p>{{playerData(0).tpm}}</p>
 		<p>0</p>
 	</div>
 
 	<div class="titles">
-		<p>Twerks {{t}}</p>
-		<p>Twerks Per Minute {{tpm}}</p>
-		<p>Score {{t}}</p>
+		<p>Twerks</p>
+		<p>Twerks Per Minute</p>
+		<p>Score</p>
 	</div>
 
 	<div class="player-2">
-		<p>0</p>
-		<p>0</p>
+		<p>{{playerData(1).t}}</p>
+		<p>{{playerData(1).tpm}}</p>
 		<p>0</p>
 	</div>
 </div>
@@ -22,5 +22,5 @@
 <div style="clear: both;"></div>
 
 <div class="twerk-bar">
-	<div class="score-bar" style="width:{{t}}px;"></div>
+	<div class="score-bar" style="width:{{barProgress}}px;"></div>
 </div>
