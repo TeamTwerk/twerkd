@@ -25,3 +25,21 @@
   height: 400px;
   width: 100%;
 }
+
+.battle-stats {
+	.player-1 {
+		 float: left;
+  		width:33.33333%;
+  		text-align:left;
+	}
+	.titles {
+		 float: left;
+ 		width:33.33333%;
+  		text-align:center;
+	}
+	.player-2 {
+		float: left;
+ 		width:33.33333%;
+ 		text-align:right;
+	}
+}
