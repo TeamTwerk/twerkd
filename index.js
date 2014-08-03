@@ -115,10 +115,20 @@ setInterval(function () {
   matchmake();
 }, 1000);
 
+function generateRandomString(len) {
+  var chars = 'abcdefghijklmnopqrstuvwxyz123456789';
+  var result = "";
+  while(result.length < len) {
+    var index = Math.floor(Math.random() * chars.length);
+    result += chars[index];
+  }
+  return result;
+}
+
 function matchmake() {
   var pair = findPair();
   if (pair) {
-      var randomRoomId = shortId.generate();
+      var randomRoomId = generateRandomString(4);
       var player1 = pair[0];
       var player2 = pair[1];
       joinRoom(player1, randomRoomId);
